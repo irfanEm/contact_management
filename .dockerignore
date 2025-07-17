@@ -1,0 +1,9 @@
+.git
+.dockerignore
+Dockerfile
+docker-compose.yml
+env
+writable/logs/
+writable/session/
+writable/uploads/
+writable/cache/
