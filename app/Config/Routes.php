@@ -5,15 +5,15 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Dashboard::index');
-$routes->get('/dashboard', 'Dashboard::index');
+$routes->get('/contacts', 'Contact::index', ['filter' => 'auth']);
+$routes->get('/contacts/create', 'Contact::create', ['filter' => 'auth']);
+$routes->post('/contacts/store', 'Contact::store', ['filter' => 'auth']);
+$routes->get('/contacts/edit/(:num)', 'Contact::edit/$1', ['filter' => 'auth']);
+$routes->post('/contacts/update/(:num)', 'Contact::update/$1', ['filter' => 'auth']);
+$routes->get('/contacts/delete/(:num)', 'Contact::delete/$1', ['filter' => 'auth']);
 
-// Auth Routes
 $routes->get('/login', 'Auth::login');
-$routes->post('/login', 'Auth::attemptLogin');
-$routes->get('/register', 'Auth::register');
-$routes->post('/register', 'Auth::attemptRegister');
+$routes->post('/login', 'Auth::doLogin');
 $routes->get('/logout', 'Auth::logout');
 
-$routes->resource('contact');
 

@@ -6,86 +6,31 @@ use App\Models\UserModel;
 
 class Auth extends BaseController
 {
-    protected $model;
-    
-    public function __construct()
-    {
-        $this->model = new UserModel();
-        helper(['form', 'url', 'session']);
-    }
-
-    // Halaman Login
     public function login()
     {
         return view('auth/login');
     }
 
-    // Proses Login
-    public function attemptLogin()
+    public function doLogin()
     {
+        $session = session();
+        $model = new UserModel();
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
-        
-        $user = $this->model->getUser($email);
-        
-        if (!$user) {
-            session()->setFlashdata('error', 'Email tidak ditemukan');
-            return redirect()->to('/login');
+
+        $user = $model->where('email', $email)->first();
+
+        if ($user && password_verify($password, $user['password'])) {
+            $session->set('user_id', $user['id']);
+            return redirect()->to('/contacts');
         }
-        
-        if (!password_verify($password, $user['password'])) {
-            session()->setFlashdata('error', 'Password salah');
-            return redirect()->to('/login');
-        }
-        
-        session()->set([
-            'id' => $user['id'],
-            'username' => $user['username'],
-            'email' => $user['email'],
-            'logged_in' => true
-        ]);
-        
-        return redirect()->to('/dashboard');
+
+        return redirect()->back()->with('error', 'Email atau password salah');
     }
 
-    // Halaman Register
-    public function register()
-    {
-        return view('auth/register');
-    }
-
-    // Proses Register
-    public function attemptRegister()
-    {
-        $rules = [
-            'username' => 'required|min_length[3]',
-            'email' => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[8]',
-            'confirm_password' => 'matches[password]'
-        ];
-        
-        if (!$this->validate($rules)) {
-            return redirect()->to('/register')
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
-        
-        $data = [
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
-            'password' => $this->request->getPost('password')
-        ];
-        
-        $this->model->save($data);
-        
-        session()->setFlashdata('success', 'Registrasi berhasil. Silakan login.');
-        return redirect()->to('/login');
-    }
-
-    // Logout
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/');
+        return redirect()->to('/login');
     }
 }

@@ -3,64 +3,63 @@
 namespace App\Controllers;
 
 use App\Models\ContactModel;
-use CodeIgniter\RESTful\ResourceController;
 
-class Contact extends ResourceController
+class Contact extends BaseController
 {
-    protected $modelName = ContactModel::class;
-    protected $format    = 'json';
+    protected $contactModel;
+
+    public function __construct()
+    {
+        $this->contactModel = new ContactModel();
+        helper(['form']);
+    }
 
     public function index()
     {
-        return $this->respond($this->model->findAll());
-    }
-
-    public function show($id = null)
-    {
-        $data = $this->model->find($id);
-
-        if (!$data) {
-            return $this->failNotFound("Kontak dengan ID $id tidak ditemukan");
-        }
-
-        return $this->respond($data);
+        $contacts = $this->contactModel->findAll();
+        return view('contacts/index', ['contacts' => $contacts]);
     }
 
     public function create()
     {
-        $data = $this->request->getJSON(true);
+        return view('contacts/create');
+    }
+
+    public function store()
+    {
+        $data = $this->request->getPost([
+            'email', 'password', 'nama', 'no_hp'
+        ]);
+
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        if ($this->model->insert($data)) {
-            return $this->respondCreated($data);
-        }
-
-        return $this->fail($this->model->errors());
+        $this->contactModel->save($data);
+        return redirect()->to('/contacts');
     }
 
-    public function update($id = null)
+    public function edit($id)
     {
-        $data = $this->request->getJSON(true);
-
-        if (!empty($data['password'])) {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        } else {
-            unset($data['password']); // biar gak overwrite dengan kosong
-        }
-
-        if ($this->model->update($id, $data)) {
-            return $this->respond(['status' => 'updated']);
-        }
-
-        return $this->fail($this->model->errors());
+        $contact = $this->contactModel->find($id);
+        return view('contacts/edit', ['contact' => $contact]);
     }
 
-    public function delete($id = null)
+    public function update($id)
     {
-        if ($this->model->delete($id)) {
-            return $this->respondDeleted(['id' => $id]);
+        $data = $this->request->getPost([
+            'email', 'nama', 'no_hp'
+        ]);
+
+        if ($this->request->getPost('password')) {
+            $data['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
         }
 
-        return $this->failNotFound("Kontak dengan ID $id tidak ditemukan");
+        $this->contactModel->update($id, $data);
+        return redirect()->to('/contacts');
+    }
+
+    public function delete($id)
+    {
+        $this->contactModel->delete($id);
+        return redirect()->to('/contacts');
     }
 }

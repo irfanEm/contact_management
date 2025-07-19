@@ -8,41 +8,18 @@ class CreateContactTable extends Migration
 {
     public function up()
     {
+        // Tabel contacts
         $this->forge->addField([
-            'id'         => [
-                'type'           => 'INT',
-                'unsigned'       => true,
-                'auto_increment' => true,
-            ],
-            'email'      => [
-                'type'       => 'VARCHAR',
-                'constraint' => 128,
-                'unique'     => true,
-            ],
-            'password'   => [
-                'type'       => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'nama'       => [
-                'type'       => 'VARCHAR',
-                'constraint' => 100,
-            ],
-            'no_hp'      => [
-                'type'       => 'VARCHAR',
-                'constraint' => 20,
-            ],
-            'created_at' => [
-                'type' => 'DATETIME',
-                'null' => true,
-            ],
-            'updated_at' => [
-                'type' => 'DATETIME',
-                'null' => true,
-            ],
+            'id'       => ['type' => 'INT', 'auto_increment' => true],
+            'email'    => ['type' => 'VARCHAR', 'constraint' => 128],
+            'password' => ['type' => 'VARCHAR', 'constraint' => 255],
+            'nama'     => ['type' => 'VARCHAR', 'constraint' => 100],
+            'no_hp'    => ['type' => 'VARCHAR', 'constraint' => 20],
+            'created_at' => ['type' => 'DATETIME', 'null' => true],
+            'updated_at' => ['type' => 'DATETIME', 'null' => true],
         ]);
-
-        $this->forge->addKey('id', true); // Primary Key
-        $this->forge->createTable('contact');
+        $this->forge->addKey('id', true);
+        $this->forge->createTable('contacts');
     }
 
     public function down()

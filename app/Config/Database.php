@@ -26,9 +26,9 @@ class Database extends Config
      */
     public array $default = [
         'DSN'          => '',
-        'hostname'     => 'localhost',
+        'hostname'     => 'mysql',
         'username'     => 'root',
-        'password'     => '',
+        'password'     => 'root',
         'database'     => 'contact_management',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
@@ -42,6 +42,7 @@ class Database extends Config
         'strictOn'     => false,
         'failover'     => [],
         'port'         => 3306,
+        'Dbsocket'     => '', // 👈 tambahkan agar tidak konek lewat socket
         'numberNative' => false,
         'foundRows'    => false,
         'dateFormat'   => [
