@@ -1,11 +1,16 @@
-<?= view('templates/header') ?>
+<h3><?= esc($title) ?></h3>
 
-<div class="container py-5">
-  <h2>Daftar Kontak</h2>
-  <a href="/contacts/create" class="btn btn-primary mb-3">Tambah Kontak</a>
-  <table class="table table-bordered">
-    <thead>
+<a href="/contacts/create" class="btn btn-primary mb-3">Tambah Kontak</a>
+
+<?php if (session()->getFlashdata('message')): ?>
+  <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
+<?php endif; ?>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
       <tr>
+        <th>No</th>
         <th>Nama</th>
         <th>Email</th>
         <th>No HP</th>
@@ -13,19 +18,18 @@
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($contacts as $c): ?>
-      <tr>
-        <td><?= esc($c['nama']) ?></td>
-        <td><?= esc($c['email']) ?></td>
-        <td><?= esc($c['no_hp']) ?></td>
-        <td>
-          <a href="/contacts/edit/<?= $c['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-          <a href="/contacts/delete/<?= $c['id'] ?>" onclick="return confirm('Hapus kontak?')" class="btn btn-sm btn-danger">Hapus</a>
-        </td>
-      </tr>
+      <?php foreach ($contacts as $i => $contact): ?>
+        <tr>
+          <td><?= $i + 1 ?></td>
+          <td><?= esc($contact['nama']) ?></td>
+          <td><?= esc($contact['email']) ?></td>
+          <td><?= esc($contact['no_hp']) ?></td>
+          <td>
+            <a href="/contacts/edit/<?= $contact['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+            <a href="/contacts/delete/<?= $contact['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus?')">Delete</a>
+          </td>
+        </tr>
       <?php endforeach ?>
     </tbody>
   </table>
 </div>
-
-<?= view('templates/footer') ?>

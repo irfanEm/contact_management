@@ -16,13 +16,25 @@ class Contact extends BaseController
 
     public function index()
     {
-        $contacts = $this->contactModel->findAll();
-        return view('contacts/index', ['contacts' => $contacts]);
+        $data = [
+            'title' => 'Daftar Kontak',
+            'contacts' => $this->contactModel->findAll()
+        ];
+
+        return view('templates/header', $data)
+            . view('contacts/index', $data)
+            . view('templates/footer');
     }
 
     public function create()
     {
-        return view('contacts/create');
+        $data = [
+            'title' => 'Tambah Kontak'
+        ];
+
+        return view('templates/header', $data)
+            . view('contacts/create', $data)
+            . view('templates/footer');
     }
 
     public function store()
@@ -34,13 +46,22 @@ class Contact extends BaseController
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
         $this->contactModel->save($data);
-        return redirect()->to('/contacts');
+
+        return redirect()->to('/contacts')->with('message', 'Kontak berhasil ditambahkan!');
     }
 
     public function edit($id)
     {
         $contact = $this->contactModel->find($id);
-        return view('contacts/edit', ['contact' => $contact]);
+
+        $data = [
+            'title' => 'Edit Kontak',
+            'contact' => $contact
+        ];
+
+        return view('templates/header', $data)
+            . view('contacts/edit', $data)
+            . view('templates/footer');
     }
 
     public function update($id)
@@ -54,12 +75,14 @@ class Contact extends BaseController
         }
 
         $this->contactModel->update($id, $data);
-        return redirect()->to('/contacts');
+
+        return redirect()->to('/contacts')->with('message', 'Kontak berhasil diupdate!');
     }
 
     public function delete($id)
     {
         $this->contactModel->delete($id);
-        return redirect()->to('/contacts');
+
+        return redirect()->to('/contacts')->with('message', 'Kontak berhasil dihapus!');
     }
 }

@@ -30,7 +30,10 @@ class Auth extends BaseController
 
     public function logout()
     {
-        session()->destroy();
-        return redirect()->to('/login');
+        // Hapus hanya data login
+        session()->remove(['user_id', 'user_email']); // sesuaikan dengan yang kamu set saat login
+
+        return redirect()->to('/login')->with('message', 'Anda telah logout !');
     }
+
 }
